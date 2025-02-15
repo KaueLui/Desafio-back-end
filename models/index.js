@@ -12,6 +12,7 @@ db.Sequelize = Sequelize;
 
 db.Task = require("./task")(sequelize, Sequelize);
 db.Tag = require("./tag")(sequelize, Sequelize);
+db.User = require("./user")(sequelize);
 
 db.Task.belongsToMany(db.Tag, { through: "TaskTags" });
 db.Tag.belongsToMany(db.Task, { through: "TaskTags" });
