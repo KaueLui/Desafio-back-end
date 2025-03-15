@@ -1,22 +1,31 @@
 module.exports = (sequelize, DataTypes) => {
-  const Tag = sequelize.define("Tag", {
+    const Tag = sequelize.define("Tag", {
       name: {
-          type: DataTypes.STRING,
-          allowNull: false,
+        type: DataTypes.STRING,
+        allowNull: false,
       },
       color: {
-          type: DataTypes.STRING,
-          allowNull: false,
+        type: DataTypes.STRING,
+        allowNull: false,
       },
-  });
-
-  Tag.associate = (models) => {
+      userId: { // Adicionado
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Users",
+          key: "id",
+        },
+      },
+    });
+  
+    Tag.associate = (models) => {
       Tag.belongsToMany(models.Task, {
-          through: "TaskTags",
-          foreignKey: "tagId",
-          otherKey: "taskId",
+        through: "TaskTags",
+        foreignKey: "tagId",
+        otherKey: "taskId",
       });
+      Tag.belongsTo(models.User, { foreignKey: "userId" }); // Associação com User
+    };
+  
+    return Tag;
   };
-
-  return Tag;
-};

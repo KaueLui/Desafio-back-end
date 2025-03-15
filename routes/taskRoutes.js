@@ -1,15 +1,22 @@
 const express = require("express");
 const router = express.Router();
 const { Task, Tag } = require("../models");
+const authMiddleware = require('../middlewares/auth');
+
+router.use(authMiddleware);
 
 router.post("/", async (req, res) => {
   try {
     const { title, description, status, priority } = req.body;
-    if (!title || !status || !priority) {
-      return res.status(400).json({ error: "Título, status e prioridade são obrigatórios." });
-    }
+    const userId = req.userId;
 
-    const newTask = await Task.create({ title, description, status, priority });
+    const newTask = await Task.create({ 
+      title, 
+      description, 
+      status, 
+      priority,
+      userId 
+    });
     return res.status(201).json(newTask);
   } catch (error) {
     console.error("Erro ao criar tarefa:", error);
@@ -17,15 +24,40 @@ router.post("/", async (req, res) => {
   }
 });
 
-router.get("/", async (req, res) => {
+const { Op } = require("sequelize"); // Certifique-se de importar isso no topo
+
+router.get("/", authMiddleware, async (req, res) => {
   try {
+    const userId = req.userId;
+    const { tags } = req.query; // Pega o parâmetro ?tags=Arroz
+    console.log("UserID extraído do token:", userId);
+    console.log("Filtro de tags recebido:", tags);
+
+    const includeClause = [{
+      model: Tag,
+      as: "Tags",
+      through: { attributes: [] },
+      required: false, // Mantém false por padrão
+    }];
+
+    if (tags) {
+      // Se múltiplas tags forem passadas (ex.: "Arroz,Feijão"), split pode ser usado
+      const tagNames = tags.split(','); 
+      includeClause[0].where = { name: { [Op.in]: tagNames } }; // Filtra pelo nome da tag
+      includeClause[0].required = true; // Só retorna tarefas que têm a tag
+    }
+
     const tasks = await Task.findAll({
-      include: [{ model: Tag, as: "Tags", through: { attributes: [] } }],
+      where: { userId },
+      order: [['id', 'ASC']],
+      include: includeClause,
     });
+
+    console.log(`Tarefas encontradas para userId ${userId}:`, tasks);
     return res.status(200).json(tasks);
   } catch (error) {
     console.error("Erro ao buscar tarefas:", error);
-    return res.status(500).json({ error: "Erro ao buscar tarefas." });
+    return res.status(500).json({ error: "Erro ao buscar tarefas", details: error.message });
   }
 });
 

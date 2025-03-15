@@ -31,3 +31,5 @@ app.listen(PORT, async () => {
         console.error("Erro ao sincronizar o banco:", error);
     }
 });
+
+

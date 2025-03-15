@@ -2,10 +2,16 @@ const express = require("express");
 const { Tag } = require("../models");
 const router = express.Router();
 
+const authMiddleware = require('../middlewares/auth');
+
+router.use(authMiddleware);
+
 router.post("/", async (req, res) => {
     try {
         const { name, color } = req.body;
-        const tag = await Tag.create({ name, color });
+        const userId = req.userId;
+        
+        const tag = await Tag.create({ name, color, userId });
         res.status(201).json(tag);
     } catch (error) {
         console.error(error);
@@ -15,13 +21,18 @@ router.post("/", async (req, res) => {
 
 router.get("/", async (req, res) => {
     try {
-        const tags = await Tag.findAll();
-        res.json(tags);
+      const userId = req.userId;
+      console.log("UserID extraído do token em GET /tags:", userId); // Log adicionado
+      const tags = await Tag.findAll({
+        where: { userId }
+      });
+      console.log("Tags encontradas:", tags); // Log adicional
+      res.json(tags);
     } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: "Erro ao buscar as tags." });
+      console.error(error);
+      res.status(500).json({ error: "Erro ao buscar as tags." });
     }
-});
+  });
 
 router.get("/:tagId", async (req, res) => {
     try {
