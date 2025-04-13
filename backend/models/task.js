@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
     },
     status: {
-      type: DataTypes.ENUM("Em andamento", "Finalizado", "pendente"),
+      type: DataTypes.ENUM("Andamento", "Finalizado", "Pendente"),
       allowNull: false,
     },
     priority: {

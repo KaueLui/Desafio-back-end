@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { deleteTag } from "../../services/tagService";
+import TagEditModal from "./TagEdit";
 
 interface Tag {
   id: number;
@@ -14,6 +15,7 @@ interface TagListProps {
 
 const TagList = ({ tags, onTagsChanged }: TagListProps) => {
   const [isDeleting, setIsDeleting] = useState<number | null>(null);
+  const [editingTag, setEditingTag] = useState<Tag | null>(null);
 
   const handleDelete = async (id: number) => {
     if (confirm("Tem certeza que deseja excluir esta tag?")) {
@@ -29,6 +31,14 @@ const TagList = ({ tags, onTagsChanged }: TagListProps) => {
       }
     }
   };
+  
+  const handleEdit = (tag: Tag) => {
+    setEditingTag(tag);
+  };
+  
+  const closeEditModal = () => {
+    setEditingTag(null);
+  };
 
   if (tags.length === 0) {
     return (
@@ -39,39 +49,49 @@ const TagList = ({ tags, onTagsChanged }: TagListProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-      {tags.map((tag) => (
-        <div 
-          key={tag.id} 
-          className="flex items-center justify-between p-3 bg-white border rounded-md shadow-sm"
-          style={{ borderLeftColor: tag.color, borderLeftWidth: '4px' }}
-        >
-          <div className="flex items-center">
-            <div 
-              className="w-4 h-4 mr-2 rounded-full" 
-              style={{ backgroundColor: tag.color }}
-            ></div>
-            <span className="font-medium">{tag.name}</span>
+    <>
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        {tags.map((tag) => (
+          <div 
+            key={tag.id} 
+            className="flex items-center justify-between p-3 bg-white border rounded-md shadow-sm"
+            style={{ borderLeftColor: tag.color, borderLeftWidth: '4px' }}
+          >
+            <div className="flex items-center">
+              <div 
+                className="w-4 h-4 mr-2 rounded-full" 
+                style={{ backgroundColor: tag.color }}
+              ></div>
+              <span className="font-medium">{tag.name}</span>
+            </div>
+            
+            <div className="flex space-x-2">
+              <button 
+                className="text-blue-600 hover:text-blue-800 text-sm"
+                onClick={() => handleEdit(tag)}
+              >
+                Editar
+              </button>
+              <button 
+                className="text-red-600 hover:text-red-800 text-sm"
+                onClick={() => handleDelete(tag.id)}
+                disabled={isDeleting === tag.id}
+              >
+                {isDeleting === tag.id ? "Excluindo..." : "Excluir"}
+              </button>
+            </div>
           </div>
-          
-          <div className="flex space-x-2">
-            <button 
-              className="text-blue-600 hover:text-blue-800 text-sm"
-              onClick={() => {/* mesma coisa, ainda vou por edição */}}
-            >
-              Editar
-            </button>
-            <button 
-              className="text-red-600 hover:text-red-800 text-sm"
-              onClick={() => handleDelete(tag.id)}
-              disabled={isDeleting === tag.id}
-            >
-              {isDeleting === tag.id ? "Excluindo..." : "Excluir"}
-            </button>
-          </div>
-        </div>
-      ))}
-    </div>
+        ))}
+      </div>
+      
+      {editingTag && (
+        <TagEditModal
+          tag={editingTag}
+          onClose={closeEditModal}
+          onTagUpdated={onTagsChanged}
+        />
+      )}
+    </>
   );
 };
 

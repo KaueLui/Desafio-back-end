@@ -24,12 +24,12 @@ router.post("/", async (req, res) => {
   }
 });
 
-const { Op } = require("sequelize"); // Certifique-se de importar isso no topo
+const { Op } = require("sequelize");
 
 router.get("/", authMiddleware, async (req, res) => {
   try {
     const userId = req.userId;
-    const { tags } = req.query; // Pega o parâmetro ?tags=Arroz
+    const { tags } = req.query;
     console.log("UserID extraído do token:", userId);
     console.log("Filtro de tags recebido:", tags);
 
@@ -37,14 +37,13 @@ router.get("/", authMiddleware, async (req, res) => {
       model: Tag,
       as: "Tags",
       through: { attributes: [] },
-      required: false, // Mantém false por padrão
+      required: false,
     }];
 
     if (tags) {
-      // Se múltiplas tags forem passadas (ex.: "Arroz,Feijão"), split pode ser usado
       const tagNames = tags.split(','); 
-      includeClause[0].where = { name: { [Op.in]: tagNames } }; // Filtra pelo nome da tag
-      includeClause[0].required = true; // Só retorna tarefas que têm a tag
+      includeClause[0].where = { name: { [Op.in]: tagNames } };
+      includeClause[0].required = true;
     }
 
     const tasks = await Task.findAll({

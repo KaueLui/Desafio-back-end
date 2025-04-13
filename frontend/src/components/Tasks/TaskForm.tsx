@@ -8,7 +8,7 @@ interface TaskFormProps {
 const TaskForm = ({ onTaskCreated }: TaskFormProps) => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [status, setStatus] = useState("pendente");
+  const [status, setStatus] = useState("Pendente");
   const [priority, setPriority] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -26,7 +26,7 @@ const TaskForm = ({ onTaskCreated }: TaskFormProps) => {
       
       setTitle("");
       setDescription("");
-      setStatus("pendente");
+      setStatus("Pendente");
       setPriority(1);
       
       onTaskCreated();
@@ -96,8 +96,8 @@ const TaskForm = ({ onTaskCreated }: TaskFormProps) => {
             onChange={(e) => setStatus(e.target.value)}
             className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500"
           >
-            <option value="pendente">Pendente</option>
-            <option value="Em andamento">Em andamento</option>
+            <option value="Pendente">Pendente</option>
+            <option value="Andamento">Andamento</option>
             <option value="Finalizado">Finalizado</option>
           </select>
         </div>

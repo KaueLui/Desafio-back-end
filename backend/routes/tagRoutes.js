@@ -22,11 +22,11 @@ router.post("/", async (req, res) => {
 router.get("/", async (req, res) => {
     try {
       const userId = req.userId;
-      console.log("UserID extraído do token em GET /tags:", userId); // Log adicionado
+      console.log("UserID extraído do token em GET /tags:", userId);
       const tags = await Tag.findAll({
         where: { userId }
       });
-      console.log("Tags encontradas:", tags); // Log adicional
+      console.log("Tags encontradas:", tags);
       res.json(tags);
     } catch (error) {
       console.error(error);

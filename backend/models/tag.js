@@ -8,7 +8,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
         allowNull: false,
       },
-      userId: { // Adicionado
+      userId: {
         type: DataTypes.INTEGER,
         allowNull: false,
         references: {
@@ -24,7 +24,7 @@ module.exports = (sequelize, DataTypes) => {
         foreignKey: "tagId",
         otherKey: "taskId",
       });
-      Tag.belongsTo(models.User, { foreignKey: "userId" }); // Associação com User
+      Tag.belongsTo(models.User, { foreignKey: "userId" });
     };
   
     return Tag;

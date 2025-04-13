@@ -23,7 +23,7 @@ router.post("/register", async (req, res) => {
     const user = await User.create({ name, email, password });
     return res.status(201).json({ message: "Usuário criado com sucesso", user });
   } catch (error) {
-    console.error("Erro no registro:", error); // Log no console
+    console.error("Erro no registro:", error);
     return res.status(500).json({ message: "Erro no servidor", error: error.message });
   }
 });
@@ -52,7 +52,7 @@ router.post("/login", async (req, res) => {
       expiresIn: "1h",
     });
 
-    return res.json({ message: "Login bem-sucedido", token });
+    return res.json({ message: "Login bem-sucedido", token, name: user.name});
   } catch (error) {
     console.error("Erro no login:", error);
     return res.status(500).json({ message: "Erro no servidor", error: error.message });
